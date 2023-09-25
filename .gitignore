@@ -1,3 +1,8 @@
+### Repo Specific Files ###
+
+models/
+outputs/
+
 ### Database ###
 *.db
 *.sqlite3

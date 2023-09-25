@@ -1,0 +1,24 @@
+data:
+  csv_url: "http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data"
+  csv_columns: ['MPG', 'Cylinders', 'Displacement', 'Horsepower', 'Weight', 'Acceleration', 'Model Year', 'Origin']
+  csv_na_values: ['?']
+  csv_comment: '\t'
+  csv_sep: ' '
+  split_frac: 0.8
+  split_random_state: 0
+  label_column: 'MPG'
+  cat2hot_categories: ['Origin']
+  cat2hot_mapping: [['USA', 'Europe', 'Japan']]
+
+model:
+  learning_rate: 0.1
+  loss_function: 'mean_absolute_error'
+
+train:
+  epochs: 100
+  validation_split: 0.2
+  visualize_loss: False
+
+plot:
+  y_lim_bot: 0
+  y_lim_top: 10
