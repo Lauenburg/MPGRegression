@@ -22,3 +22,48 @@ train:
 plot:
   y_lim_bot: 0
   y_lim_top: 10
+
+database:
+  name: "ml_metrics.db"
+  aggregate: True
+
+tables:
+  - name: "Datasets"
+    query: |
+      CREATE TABLE IF NOT EXISTS Datasets (
+          DataSetID INTEGER PRIMARY KEY AUTOINCREMENT,
+          DatasetURL TEXT,
+          SourceColumns TEXT,
+          TargetColumn  TEXT,
+          DropNA BOOLEAN,
+          OneHotEncoding BOOLEAN,
+          SplitFraction REAL,
+          SplitRandomState INTEGER
+      );
+  - name: "Models"
+    query: |
+        CREATE TABLE IF NOT EXISTS Models (
+            ModelID INTEGER PRIMARY KEY AUTOINCREMENT,
+            ModelType TEXT,
+            Normalization BOOLEAN,
+            LossFunction TEXT,
+            LearningRate REAL,
+            Optimizer TEXT
+        );
+  - name: "Training"
+    query: |
+      CREATE TABLE IF NOT EXISTS Training (
+          TrainingID INTEGER PRIMARY KEY AUTOINCREMENT,
+          DataSetID INTEGER,
+          ModelID INTEGER,
+          StartTime DATETIME,
+          EndTime DATETIME,
+          Epochs INTEGER,
+          ValidationSplit REAL,
+          FinalTrainLoss REAL,
+          FinalValidationLoss REAL,
+          EvaluationLoss REAL,
+          R2Score REAL,
+          FOREIGN KEY (DataSetID) REFERENCES Datasets(DataSetID),
+          FOREIGN KEY (ModelID) REFERENCES Datasets(ModelID)
+      );
