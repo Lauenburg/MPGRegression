@@ -12,6 +12,8 @@ pre-commit = "*"
 pytest = "*"
 scikit-learn = "*"
 matplotlib = "*"
+flask = "*"
+google-auth = "*"
 
 [dev-packages]
 
