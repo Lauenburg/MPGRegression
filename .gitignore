@@ -2,6 +2,7 @@
 
 models/
 outputs/
+secrets/
 
 ml_metric.db
 

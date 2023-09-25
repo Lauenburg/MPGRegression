@@ -1,24 +1,24 @@
-# MPG Regression
+# MPG Regression Project
 
-This project encapsulates a structured pipeline for the MPG Regression Model. The pipeline is comprised of the following three major components:
+The MPG Regression project offers a structured pipeline for loading a the MPG CSV dataset and training a linear regression model. This document outlines the project's structure, configuration, database logging, prediction service, and setup instructions.
 
-1. **CSVDataLoader Class**: Responsible for efficiently loading the CSV data.
-2. **LinearRegressionModel Class**: Streamlines the setup for the regression model.
-3. **LinearRegressionTrainer Class**: Manages the meticulous training of the model.
+## Project Components
 
-**Execution Guide**:
+1. **CSVDataLoader Class**: Efficiently loads CSV data.
+2. **LinearRegressionModel Class**: Provides a streamlined setup for the regression model.
+3. **LinearRegressionTrainer Class**: Handles the detailed training of the model.
 
-Initiate the pipeline through the `main.py` in the root directory.
+## How to Execute
 
-**Configuration Guide**:
+Run `main.py` in the root directory to start the pipeline.
 
-Configure the model settings via the Hydra `config.yaml` file located in the `conf/` directory.
+## Configuration
 
-**SQL Metric Database**:
+Modify the `config.yaml` file in the `conf/` directory to adjust model settings.
 
-This repository employs SQLite3 for logging information related to datasets, models, and training data. It organizes data into three tables: Datasets, Models, and Training. The Training table is interlinked with the other two tables through foreign keys, ensuring a structured and relational database setup. Besides configuration information we log for each training run the last training and validation score, the evolution score, and the coefficient of determination (R^2).
+## SQL Metric Database
 
-To join the Training rows with those of the Datasets and Models tables using foreign keys run:
+Utilizes SQLite3 to log dataset, model, and training data, maintaining structure and relations through three tables: Datasets, Models, and Training. Execute the provided SQL command to join the tables.
 
 ```sql
 SELECT *
@@ -26,6 +26,21 @@ FROM Training
 JOIN Datasets ON Training.DataSetID = Datasets.DataSetID
 JOIN Models ON Training.ModelID = Models.ModelID;
 ```
+
+## Prediction Service
+
+Retrieve predictions through a REST-API. Replace `<static_key>` and use the provided `curl` command to request a prediction.
+
+```bash
+curl -m 70 -X POST https://us-central1-mpgregression.cloudfunctions.net/mpg_regression \
+  -H "Content-Type: application/json" \
+  -H "api-key: <static_key>" \
+  -d '{"instances": [[8.0, 400.0, 230.0, 4278.0, 9.5, 73.0, 2]]}'
+```
+
+The instance values should be provided in the following order: `['Cylinders', 'Displacement', 'Horsepower', 'Weight', 'Acceleration', 'Model Year', 'Origin']`
+
+> **Note:** Please contact the author to retrieve the static key.
 
 ## Setup
 
