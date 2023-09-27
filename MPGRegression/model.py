@@ -4,33 +4,38 @@ import tensorflow as tf
 from tensorflow.keras import layers
 
 
-class LinearRegressionModel:
-    def __init__(self, learning_rate: float, loss_function: str) -> None:
-        self.learning_rate = learning_rate
-        self.loss_function = loss_function
-        self.model = self._build_model()
+class LinearRegressionModel(tf.keras.Model):
+    def __init__(self):
+        super(LinearRegressionModel, self).__init__()
+        self.normalization_layer = layers.Normalization(axis=-1)
+        self.dense = layers.Dense(units=1)
 
-    def _build_model(self) -> tf.keras.Model:
-        """Build and compile the Linear Regression model."""
-        normalization_layer = layers.Normalization(axis=-1)
-        model = tf.keras.Sequential([normalization_layer, layers.Dense(units=1)])
-        optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate)
-        model.compile(optimizer=optimizer, loss=self.loss_function)
-        return model
+    def call(self, inputs):
+        """Specifies the model's call logic.
+
+        Args:
+            input: The data to be passed through the network
+        """
+        x = self.normalization_layer(inputs)
+        return self.dense(x)
 
 
 class LinearRegressionTrainer:
     def __init__(
         self,
         model: LinearRegressionModel,
+        learning_rate: float,
+        loss_function: str,
         epochs: int,
         validation_split: float,
         train_features: pd.DataFrame,
-        test_features: pd.DataFrame,
         train_labels: pd.Series,
+        test_features: pd.DataFrame,
         test_labels: pd.Series,
     ) -> None:
-        self.model = model.model
+        self.model = model
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+        self.loss_function = loss_function
         self.epochs = epochs
         self.validation_split = validation_split
         self.train_features = train_features
@@ -38,10 +43,15 @@ class LinearRegressionTrainer:
         self.train_labels = train_labels
         self.test_labels = test_labels
         self._adapt_normalization_layer()
+        self._compile_model()
+
+    def _compile_model(self):
+        """Compile the model."""
+        self.model.compile(optimizer=self.optimizer, loss=self.loss_function)
 
     def _adapt_normalization_layer(self):
         """Adapt the normalization layer to the training features."""
-        normalization_layer = self.model.layers[0]
+        normalization_layer = self.model.normalization_layer
         normalization_layer.adapt(np.array(self.train_features))
 
     def train(self) -> pd.DataFrame:

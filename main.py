@@ -67,24 +67,16 @@ def main(cfg: DictConfig) -> None:
     dataset_id = db_manager.insert("Datasets", dataset_columns, dataset_values)
 
     # setup the model
-    model = LinearRegressionModel(
-        learning_rate=cfg.model.learning_rate, loss_function=cfg.model.loss_function
-    )
+    model = LinearRegressionModel()
 
     # write the meta data to the database
     models_columns = [
         "ModelType",
         "Normalization",
-        "LossFunction",
-        "LearningRate",
-        "Optimizer",
     ]
     models_values = [
         "LinearRegressionModel",
         True,
-        cfg.model.loss_function,
-        cfg.model.learning_rate,
-        "Adam",
     ]
 
     model_id = db_manager.insert("Models", models_columns, models_values)
@@ -97,6 +89,8 @@ def main(cfg: DictConfig) -> None:
     trainer = LinearRegressionTrainer(
         model=model,
         epochs=cfg.train.epochs,
+        learning_rate=cfg.train.learning_rate,
+        loss_function=cfg.train.loss_function,
         validation_split=cfg.train.validation_split,
         train_features=dataloader.train_features,
         test_features=dataloader.test_features,
@@ -110,7 +104,7 @@ def main(cfg: DictConfig) -> None:
     stop = datetime.now()
     stop = stop.strftime("%Y-%m-%d %H:%M:%S")
 
-    model.model.save("models")
+    trainer.model.save("models")
 
     if cfg.train.visualize_loss:
         plot_loss(history, cfg.plot.y_lim_bot, cfg.plot.y_lim_top)
@@ -133,6 +127,9 @@ def main(cfg: DictConfig) -> None:
         "ModelID",
         "StartTime",
         "EndTime",
+        "LossFunction",
+        "LearningRate",
+        "Optimizer",
         "Epochs",
         "ValidationSplit",
         "FinalTrainLoss",
@@ -146,6 +143,9 @@ def main(cfg: DictConfig) -> None:
         model_id,
         start,
         stop,
+        cfg.train.loss_function,
+        cfg.train.learning_rate,
+        "Adam",
         cfg.train.epochs,
         cfg.train.validation_split,
         history["loss"].iloc[-1],
