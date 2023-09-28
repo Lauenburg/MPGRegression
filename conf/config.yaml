@@ -10,11 +10,9 @@ data:
   cat2hot_categories: ['Origin']
   cat2hot_mapping: [['USA', 'Europe', 'Japan']]
 
-model:
+train:
   learning_rate: 0.1
   loss_function: 'mean_absolute_error'
-
-train:
   epochs: 100
   validation_split: 0.2
   visualize_loss: False
@@ -45,10 +43,7 @@ tables:
         CREATE TABLE IF NOT EXISTS Models (
             ModelID INTEGER PRIMARY KEY AUTOINCREMENT,
             ModelType TEXT,
-            Normalization BOOLEAN,
-            LossFunction TEXT,
-            LearningRate REAL,
-            Optimizer TEXT
+            Normalization BOOLEAN
         );
   - name: "Training"
     query: |
@@ -58,6 +53,9 @@ tables:
           ModelID INTEGER,
           StartTime DATETIME,
           EndTime DATETIME,
+          LossFunction TEXT,
+          LearningRate REAL,
+          Optimizer TEXT,
           Epochs INTEGER,
           ValidationSplit REAL,
           FinalTrainLoss REAL,
