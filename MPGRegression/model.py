@@ -6,7 +6,7 @@ from tensorflow.keras import layers
 
 class LinearRegressionModel(tf.keras.Model):
     def __init__(self):
-        super(LinearRegressionModel, self).__init__()
+        super().__init__()
         self.normalization_layer = layers.Normalization(axis=-1)
         self.dense = layers.Dense(units=1)
 
